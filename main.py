@@ -59,12 +59,22 @@ def startup():
     for n in range(10):
         randHealth = random.randint(1, 100)
         randLocation = []
-        for n in range(2):
+        for i in range(2):
             randLocation.append(random.randint(1, 50))
         randDirection = directions[random.randint(0, 3)]
         cows.append(Entity(randHealth, randLocation, randDirection))
 
     return cows
+
+def breed(cows, cow1, cow2):
+    '''Create new cow from two existing cows'''
+    health = (cow1.health + cow2.health) / 2
+    location = [cow1.location[0] + 1, cow1.location[1]]
+    randDirection = directions[random.randint(0, 3)]
+    newCow = Entity(health, location, randDirection)
+    #cows.append(newCow)
+
+    return newCow
 
 if __name__ == '__main__':
     cows = startup()
