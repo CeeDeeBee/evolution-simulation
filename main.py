@@ -1,13 +1,16 @@
 #A basic natural selection(?) simulation
 import numpy as np
-import random
+import random, uuid
 directions = ['N', 'E', 'S', 'W']
 class Entity:
     '''Basic entity class'''
-    def __init__(self, health, location, direction):
+    def __init__(self, health, location, direction, cowId):
+        self.cowId = cowId
         self.health = health
+        self.initialHealth = health
         self.location = location
         self.direction = direction
+        self.canBreed = True
         self.offset = [0, 0]
 
     def move(self):
@@ -50,31 +53,38 @@ class Entity:
                 self.location[0] += 1
                 self.offset = [10, 0]
                 self.direction = 'E'
+        #reduce health
+        self.health -= 1
 
 
 def startup():
     '''Startup Function'''
     cows = []
     #Generate entities
-    for n in range(10):
-        randHealth = random.randint(1, 100)
+    for n in range(20):
+        randHealth = random.randint(50, 200)
         randLocation = []
         for i in range(2):
             randLocation.append(random.randint(1, 50))
         randDirection = directions[random.randint(0, 3)]
-        cows.append(Entity(randHealth, randLocation, randDirection))
+        cows.append(Entity(randHealth, randLocation, randDirection, uuid.uuid1()))
 
     return cows
 
 def breed(cows, cow1, cow2):
     '''Create new cow from two existing cows'''
-    health = (cow1.health + cow2.health) / 2
-    location = [cow1.location[0] + 1, cow1.location[1]]
-    randDirection = directions[random.randint(0, 3)]
-    newCow = Entity(health, location, randDirection)
-    #cows.append(newCow)
+    if cow1.canBreed and cow2.canBreed:
+        health = round((cow1.initialHealth + cow2.initialHealth) / 2)
+        location = [cow1.location[0] + 1, cow1.location[1]]
+        randDirection = directions[random.randint(0, 3)]
+        newCow = Entity(health, location, randDirection, uuid.uuid1())
+        cow1.canBreed, cow2.canBreed = False, False
 
-    return newCow
+        return newCow
+    else:
+        cow1.canBreed, cow2.canBreed = True, True
+
+        return False
 
 if __name__ == '__main__':
     cows = startup()
