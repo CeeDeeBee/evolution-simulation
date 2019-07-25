@@ -3,8 +3,11 @@ import tkinter, main, time
 window = tkinter.Tk()
 window.title('Evolutionary Computation Simulation')
 
-canvas = tkinter.Canvas(window, width=500, height=520)
+canvas = tkinter.Canvas(window, width=500, height=500)
 canvas.pack()
+cowsNum = tkinter.StringVar()
+tkinter.Label(window, text='Number of Cows:').pack()
+tkinter.Label(window, textvariable=cowsNum).pack()
 def getColor(health):
     if health < 41:
         return 'red'
@@ -14,7 +17,7 @@ def getColor(health):
         return 'yellow'
     elif health < 161:
         return 'green'
-    else:
+    else: 
         return 'blue'
 
 def drawCow(cow):
@@ -27,9 +30,6 @@ def drawCow(cow):
 for i in range(50):
     canvas.create_line(0, 10*i, 500, 10*i)
     canvas.create_line(10*i, 0, 10*i, 500)
-    
-#draw number of cows text
-canvas.create_text(425, 510, text='Number of Cows: ')
 
 #generate cows from main.py script
 cows = main.startup()
@@ -86,10 +86,8 @@ for x in range(500):
                 drawnCows[newCow.cowId] = newDrawnCow
 
     #update number of cows
-    try:
-        cowsDisplay.update()
-    except NameError:
-        cowsDisplay = canvas.create_text(475, 510, text=len(cows))
+    cowsNum.set(len(cows))
+
     canvas.update()
     time.sleep(0.1)
 
