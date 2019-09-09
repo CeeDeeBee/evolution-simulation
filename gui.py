@@ -5,10 +5,17 @@ window.title('Evolutionary Computation Simulation')
 
 canvas = tkinter.Canvas(window, width=500, height=500)
 canvas.pack()
+#Number of cows label
 cowsNum = tkinter.StringVar()
 tkinter.Label(window, text='Number of Cows:').pack()
 tkinter.Label(window, textvariable=cowsNum).pack()
+#Average health of cows label
+avgHealth = tkinter.StringVar()
+tkinter.Label(window, text='Average Health:').pack()
+tkinter.Label(window, textvariable=avgHealth).pack()
+
 def getColor(health):
+    '''return color for cow given health'''
     if health < 41:
         return 'red'
     elif health < 81:
@@ -43,12 +50,14 @@ for cow in cows:
 for x in range(500):
     cowLocations = []
     cowsToRemove = []
+    totalHealth = 0
     print('----')
     for i in range(len(cows)):
         print(cows[i].health)
         #move cows
         if cows[i].health > 0:
             cows[i].move()
+            totalHealth += cows[i].health
         else:
             cowsToRemove.append(cows[i].cowId)
         #draw new location
@@ -61,11 +70,9 @@ for x in range(500):
         for cow in cows:
             if cow.cowId == cowId:
                 cows.remove(cow)
-
+                
         del drawnCows[cowId]
-            
-            
-    
+
     #build dict of location occurances
     locationDict = {}
     for location in cowLocations:
@@ -77,7 +84,7 @@ for x in range(500):
     #check if there are two cows in same location and breed + draw if so
     for key, value in locationDict.items():
         if value > 1:
-            cowsToBreed = [index for index, location in enumerate(cowLocations) if location == key]
+            cowsToBreed = [index for index, location in enumerate(cowLocations) if location == key] #gets indices of cows in the same location
             print(cowsToBreed)
             newCow = main.breed(cows, cows[cowsToBreed[0]], cows[cowsToBreed[1]])
             if newCow:
@@ -85,8 +92,9 @@ for x in range(500):
                 newDrawnCow = drawCow(newCow)
                 drawnCows[newCow.cowId] = newDrawnCow
 
-    #update number of cows
+    #update labels
     cowsNum.set(len(cows))
+    avgHealth.set(round(totalHealth/len(cows)))
 
     canvas.update()
     time.sleep(0.1)
